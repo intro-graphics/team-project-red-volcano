@@ -105,16 +105,20 @@ export class Obj_File_Demo extends Scene
     constructor()                               
       { super();
                                       // Load the model file:
-        this.shapes = { "teapot": new Shape_From_File( "assets/teapot.obj" ) };
+        this.shapes = { "teapot": new Shape_From_File( "assets/teapot.obj" ),
+            "volcano": new Shape_From_File( "assets/volcano_main.obj" ) };
 
                                       // Don't create any DOM elements to control this scene:
         this.widget_options = { make_controls: false };
                                                           // Non bump mapped:
-        this.stars = new Material( new defs.Textured_Phong( 1 ),  { color: color( .5,.5,.5,1 ), 
+        this.stars = new Material( new defs.Textured_Phong( 1 ),  { color: color( .5,.5,.5,1 ),
           ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture( "assets/stars.png" ) });
                                                            // Bump mapped:
         this.bumps = new Material( new defs.Fake_Bump_Map( 1 ), { color: color( .5,.5,.5,1 ), 
           ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture( "assets/stars.png" ) });
+
+        this.volcano = new Material(new defs.Textured_Phong(1), {color: color(0,0,0,1),
+        ambient: 0, diffusivity: 1});
       }
     display( context, program_state )
       { const t = program_state.animation_time;
@@ -122,9 +126,7 @@ export class Obj_File_Demo extends Scene
         program_state.set_camera( Mat4.translation( 0,0,-5 ) );    // Locate the camera here (inverted matrix).                  
         program_state.projection_transform = Mat4.perspective( Math.PI/4, context.width/context.height, 1, 500 );
                                                 // A spinning light to show off the bump map:
-        program_state.lights = [ new Light( 
-                                 Mat4.rotation( t/300,   1,0,0 ).times( vec4( 3,2,10,1 ) ), 
-                                             color( 1,.7,.7,1 ), 100000 ) ];
+        program_state.lights = [  new Light(Mat4.rotation( t/300,   1,0,0 ).times( vec4( 3,2,10,1 ) ), color( 1,.7,.7,1 ), 100000 ) ];
         
         for( let i of [ -1, 1 ] )
         {                                       // Spin the 3D model shapes as well.
@@ -132,8 +134,15 @@ export class Obj_File_Demo extends Scene
                           .times( Mat4.translation( 2*i, 0, 0 ) )
                           .times( Mat4.rotation( t/1500,   -1,2,0 ) )
                           .times( Mat4.rotation( -Math.PI/2,   1,0,0 ) );
-          this.shapes.teapot.draw( context, program_state, model_transform, i == 1 ? this.stars : this.bumps );
+            // this.shapes.teapot.draw( context, program_state, model_transform, i == 1 ? this.stars : this.bumps );
+            this.shapes.volcano.draw( context, program_state, model_transform, i == 1 ? this.stars : this.bumps );
         }
+
+          // const model_transform = Mat4.identity()
+          //     .times(Mat4.translation(2,0,0))
+          //     .times(Mat4.rotation(180, 0,1,0));
+          //
+          // this.shapes.volcano.draw(context, program_state, model_transform, this.volcano);
       }
   show_explanation( document_element )
     { document_element.innerHTML += "<p>This demo loads an external 3D model file of a teapot.  It uses a condensed version of the \"webgl-obj-loader.js\" "
