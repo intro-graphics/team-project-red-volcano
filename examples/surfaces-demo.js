@@ -1,4 +1,4 @@
-import {tiny, defs} from './common.js';
+import {tiny, defs} from '../common.js';
                                                   // Pull these names into this module's scope for convenience:
 const { Vector3, vec3, vec4, color, Mat4, Light, Shape, Material, Shader, Texture, Scene } = tiny;
 const { Triangle, Square, Tetrahedron, Windmill, Cube, Subdivision_Sphere } = defs;
