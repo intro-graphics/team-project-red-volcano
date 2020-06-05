@@ -476,7 +476,7 @@ export class Volcano extends Volcano_Base {
         if (lava6Z < -5){
             lava6Z = -5;
         }
-        const lava_transform3 = Mat4.scale(0.25,0.25,0.25).times(Mat4.translation(-0.9, -3.1, lava6Z).times(Mat4.rotation(3.7, 1, 0, 1)));
+        const lava_transform3 = Mat4.scale(0.25,0.241,0.25).times(Mat4.translation(-0.9, -3.1, lava6Z).times(Mat4.rotation(3.7, 1, 0, 1)));
         this.shapes.lava2.draw(context, program_state, lava_transform3, this.lava);
 
 
@@ -510,8 +510,8 @@ export class Volcano extends Volcano_Base {
 
         // Draw buildings
         const medieval_house_transform = Mat4.identity()
-            .times(Mat4.scale(0.05, 0.05, 0.05))
-            .times(Mat4.translation(12, -9.2, -10))
+            .times(Mat4.scale(.05, .05, .05))
+            .times(Mat4.translation(-7, -10, -16.5))
             .times(Mat4.rotation(-0.25, 0, 0, 1));
         this.shapes.medieval_house.draw(context, program_state, medieval_house_transform, this.medieval_house);
 
