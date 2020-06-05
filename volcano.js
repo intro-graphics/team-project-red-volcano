@@ -173,10 +173,36 @@ class Volcano_Base extends Scene {
         if (!context.scratchpad.controls) {
             this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
             // Also set initial camera position
-            program_state.set_camera(Mat4.translation(0, 0, -5).times(Mat4.rotation(this.deg_to_rads(20), 1, 0, 0,).times(Mat4.rotation(this.deg_to_rads(160), 0, 1, 0))));
+            program_state.set_camera(Mat4.translation(0, -0.2, -6).times(Mat4.rotation(this.deg_to_rads(20), 1, 0, 0,).times(Mat4.rotation(this.deg_to_rads(160), 0, 1, 0))));
         }
     }
 }
+
+
+function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min) ) + min;
+}
+
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+
+let particles = [];
+let velocity = [];
+let particles2 = [];
+let velocity2 = [];
+let xDrop = 0;
+let yDrop = 0;
+let rainOn = 0;
+let smokeOn = 0;
+let cyCloude = 8;
+let cxCloude = 5;
+let lava2Z = 0;
+let lava3Z = 0;
+let lava4Z = 0;
+let lava5Z = 0;
+let lava6Z = 0;
 
 export class Volcano extends Volcano_Base {
     constructor() {
@@ -191,6 +217,11 @@ export class Volcano extends Volcano_Base {
             "medieval_house": new Shape_From_File("assets/medieval_simple_house.obj"),
             "shack": new Shape_From_File("assets/shack.obj"),
             "watchtower": new Shape_From_File("assets/watchtower.obj"),
+            "smoke":new Shape_From_File("assets/smoke.obj"),
+            "cloud":new Shape_From_File("assets/cloud.obj"),
+            "drop":new Shape_From_File("assets/drop.obj"),
+            "lava2":new Shape_From_File("assets/lava2.obj"),
+            "lava3":new Shape_From_File("assets/lava3.obj"),
             // "lava": new (Subdivision_Sphere.prototype.make_flat_shaded_version())(1)
         };
 
@@ -242,14 +273,94 @@ export class Volcano extends Volcano_Base {
             ambient: 0.2,
             diffusivity: 0.5,
             specularity: 0.5
-        })
+        });
+        this.cloud = new Material(new defs.Phong_Shader(1), {
+            color: color(0.5, 0.5, 0.5, 1),
+            ambient: 0.8,
+            diffusivity: 1
+        });
+        this.drop = new Material(new defs.Phong_Shader(1), {
+            color: color(0, 0, 1, 1),
+            ambient: 0.8,
+            diffusivity: 1
+        });
+        this.lava = new Material(new defs.Phong_Shader(1), {
+            color: color(1, 0.1, 0, 1),
+            ambient: 0.8,
+            diffusivity: 0.2
+        });
+
+        for(let j = 0; j < 130; j++){
+            velocity[j] = getRandomArbitrary(0.2, 1) ;
+        }
+
+        for(let j = 0; j < 50; j++){
+            velocity2[j] = getRandomArbitrary(0.1, 0.2) ;
+        }
+        this.crosshair_Matrix = Mat4.scale(0.25,0.25,0.25).times(Mat4.translation(5, 8, 1.1));
+
     }
 
-    // show_explanation( document_element )
-    //   { document_element.innerHTML += "<p>This demo loads an external 3D model file of a teapot.  It uses a condensed version of the \"webgl-obj-loader.js\" "
-    //                                +  "open source library, though this version is not guaranteed to be complete and may not handle some .OBJ files.  It is contained in the class \"Shape_From_File\". "
-    //                                +  "</p><p>One of these teapots is lit with bump mapping.  Can you tell which one?</p>";
-    //   }
+    make_control_panel()
+    {
+        this.key_triggered_button( "Move Left", [ "j" ], this.move_left );
+        this.key_triggered_button( "Move Right", [ "l" ], this.move_right );
+        this.key_triggered_button( "Move Up", [ "i" ], this.move_up );
+        this.key_triggered_button( "Move Down", [ "k" ], this.move_down );
+        this.key_triggered_button( "Rain on/off", [ "t" ], this.Rain );
+        this.key_triggered_button( "Smoke on/off", [ "m" ], this.Smoke );
+    }
+
+    move_left()
+    {
+        this.crosshair_Matrix = this.crosshair_Matrix.times(Mat4.translation(0.2, 0, 0));
+        cxCloude +=0.2;
+        xDrop += 2.5;
+    }
+    move_right()
+    {
+        this.crosshair_Matrix = this.crosshair_Matrix.times(Mat4.translation(-0.2, 0, 0));
+        cxCloude -=0.2;
+        xDrop -= 2.5;
+    }
+
+    move_up()
+    {
+        this.crosshair_Matrix = this.crosshair_Matrix.times(Mat4.translation(0, 0.2, 0));
+        cyCloude += 0.2;
+        yDrop += 2.5;
+    }
+
+    move_down()
+    {
+        this.crosshair_Matrix = this.crosshair_Matrix.times(Mat4.translation(0, -0.2, 0));
+        cyCloude -= 0.2;
+        yDrop -= 2.5;
+    }
+
+    Rain()
+    {
+        if(rainOn === 0){
+            rainOn = 1
+        }
+        else{
+            rainOn = 0;
+        }
+    }
+
+    Smoke()
+    {
+        if(smokeOn === 0){
+            smokeOn = 1
+        }
+        else{
+            smokeOn = 0;
+        }
+    }
+
+
+    //######################  Display  ############################\\
+
 
     display(context, program_state) {
         super.display(context, program_state);
@@ -283,8 +394,119 @@ export class Volcano extends Volcano_Base {
             .times(Mat4.scale(0.8, 0.8, 0.8));
         this.shapes.volcano.draw(context, program_state, volcano_transform, this.volcano);
 
-        // Draw lava
-        // this.shapes.lava.draw(context, program_state, Mat4.identity(), this.lava);
+
+        //Draw Smoke
+        this.smoke = new Material(new defs.Phong_Shader(1), {color: color(0.5, 0.5, 0.5, 1), ambient: .3, diffusivity: 1, specularity: .5});
+        particles.push(this.smoke);
+
+
+        //Particles Movement
+        for (let i = 0; i < particles.length; i++){
+            let smoke_transform = Mat4.scale(
+                0.02 + (10 + ((t/((velocity[i])*800))%30))*3/1000,
+                0.02 + (10 + ((t/((velocity[i])*800))%30))*3/1000,
+                0.02 + (10 + ((t/((velocity[i])*800))%30))*3/1000)
+                .times(Mat4.translation(-2 + i/20, ((t/((velocity[i])*800))%30), 4));
+            if(10 + ((t/((velocity[i])*800))%30) < 29){
+                let distance = (cyCloude + 6.5) - (((t/((velocity[i])*800))%30));
+                let range = cyCloude - (-5 + i/15);
+                if(!(cxCloude < 1.8  && cxCloude > -1.4 && distance < 0.06 )){
+                    if(smokeOn === 0){
+                        this.shapes.smoke.draw(context, program_state, smoke_transform, particles[i]);
+                    }
+                }
+            }
+        }
+
+        //Draw Smoke cloud
+        this.shapes.cloud.draw(context, program_state, this.crosshair_Matrix, this.cloud);
+
+        //Draw lava
+        let lavaY = -1.3 + t/10000;
+        if (lavaY > 0 ){
+            lavaY = 0;
+        }
+        const lava_transform1 = Mat4.scale(0.25,0.25,0.25).times(Mat4.translation(0, lavaY, 1.1));
+        this.shapes.cloud.draw(context, program_state, lava_transform1, this.lava);
+
+        if(lavaY !== 0){
+            lava2Z = - t/20000;
+        }
+        if (lava2Z < -0.3){
+            lava2Z = -0.3;
+        }
+        const lava_transform2 = Mat4.scale(0.25,0.25,0.25).times(Mat4.translation(0, -1.6, lava2Z));
+        this.shapes.lava2.draw(context, program_state, lava_transform2, this.lava);
+
+        if(lava3Z !== -0.3){
+            lava3Z = - t/20000;
+        }
+        if (lava3Z < -0.5){
+            lava3Z = -0.5;
+        }
+        const lava_transform5 = Mat4.scale(0.20,0.20,0.20).times(Mat4.translation(-0.91, -1.7, lava3Z).times(Mat4.rotation(4.4, 0, 1, 0)));
+        this.shapes.lava3.draw(context, program_state, lava_transform5, this.lava);
+
+
+        if(lava3Z !== -0.5){
+            lava4Z = - t/5000;
+        }
+        if (lava4Z < -2.4){
+            lava4Z = -2.4;
+        }
+        const lava_transform4 = Mat4.scale(0.20,0.20,0.20).times(Mat4.translation(-1.5, -2.7, lava4Z).times(Mat4.rotation(4.4, 0, 1, 0)));
+        this.shapes.lava3.draw(context, program_state, lava_transform4, this.lava);
+
+
+        if(lava4Z !== -2.4){
+            lava5Z = - t/3000;
+        }
+        if (lava5Z < -3.42){
+            lava5Z = -3.42;
+        }
+        const lava_transform6 = Mat4.scale(0.20,0.20,0.20).times(Mat4.translation(-1.5, -3.2, lava5Z).times(Mat4.rotation(4.4, 0, 1, 0)));
+        this.shapes.lava3.draw(context, program_state, lava_transform6, this.lava);
+
+
+
+
+        if(lava5Z !== -3.42){
+            lava6Z = - t/2500;
+        }
+        if (lava6Z < -5){
+            lava6Z = -5;
+        }
+        const lava_transform3 = Mat4.scale(0.25,0.25,0.25).times(Mat4.translation(-0.9, -3.1, lava6Z).times(Mat4.rotation(3.7, 1, 0, 1)));
+        this.shapes.lava2.draw(context, program_state, lava_transform3, this.lava);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //Draw Drop
+        this.drop = new Material(new defs.Phong_Shader(1), {color: color(0, 0, 1, 1), ambient: .3, diffusivity: 1, specularity: .5 });
+        particles2.push(this.drop);
+        //Drop particles
+        for (let i = 0; i < particles2.length; i++){
+            let model_transform10 = Mat4.scale(0.02,0.02,0.02)
+                                    .times(Mat4.translation(55 + i/2 + xDrop, (yDrop + 100) - ((t/((velocity2[i])*400))%120), 20));
+            if((150 - ((t/((velocity2[i])*400))%120)) > 90){
+                if(rainOn === 1){
+                    this.shapes.drop.draw(context, program_state, model_transform10, particles2[i]);
+                }
+            }
+        }
 
         // Draw buildings
         const medieval_house_transform = Mat4.identity()
