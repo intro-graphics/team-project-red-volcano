@@ -232,6 +232,13 @@ export class Volcano extends Volcano_Base {
             diffusivity: .5,
             specularity: 0
         });
+        this.video_background = new Material(new defs.Textured_Phong(1), {
+            color: color(0, 0, 0, 1),
+            ambient: 1,
+            diffusivity: 0,
+            specularity: 0,
+            texture: new Texture("assets/video_img.png")
+        });
         this.base = new Material(new defs.Phong_Shader(1), {
             color: color(12 / 255, 12 / 255, 12 / 255, 1),
             ambient: 1,
@@ -299,16 +306,20 @@ export class Volcano extends Volcano_Base {
         }
         this.crosshair_Matrix = Mat4.scale(0.25,0.25,0.25).times(Mat4.translation(5, 8, 1.1));
 
+        this.background_toggle = this.background;
     }
 
     make_control_panel()
     {
+        this.key_triggered_button( "Graduation Background on/off", [ "b" ], () => this.background_toggle = this.background_toggle === this.background ? this.video_background : this.background);
+        this.new_line();
+        this.key_triggered_button( "Rain on/off", [ "t" ], this.Rain );
+        this.key_triggered_button( "Smoke on/off", [ "m" ], this.Smoke );
+        this.new_line();
         this.key_triggered_button( "Move Left", [ "j" ], this.move_left );
         this.key_triggered_button( "Move Right", [ "l" ], this.move_right );
         this.key_triggered_button( "Move Up", [ "i" ], this.move_up );
         this.key_triggered_button( "Move Down", [ "k" ], this.move_down );
-        this.key_triggered_button( "Rain on/off", [ "t" ], this.Rain );
-        this.key_triggered_button( "Smoke on/off", [ "m" ], this.Smoke );
     }
 
     move_left()
@@ -374,9 +385,10 @@ export class Volcano extends Volcano_Base {
         // Scene background
         const background_transform = Mat4.identity()
             .times(Mat4.scale(5, 5, 2.2))
-            .times(Mat4.translation(1, -0.35, 10))
-            .times(Mat4.rotation(0.56, 0, 1, 0));
-        this.shapes.background.draw(context, program_state, background_transform, this.background);
+            .times(Mat4.translation(3, -0.35, 7))
+            .times(Mat4.rotation(0.56, 0, 1, 0))
+            .times(Mat4.rotation(-1.5708, 0, 0, 1));
+        this.shapes.background.draw(context, program_state, background_transform, this.background_toggle);
 
         // Scene base
         const base_transform = Mat4.scale(2, 2, 2)
