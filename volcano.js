@@ -501,7 +501,8 @@ export class Volcano extends Volcano_Base {
         for (let i = 0; i < particles2.length; i++){
             let model_transform10 = Mat4.scale(0.02,0.02,0.02)
                                     .times(Mat4.translation(55 + i/2 + xDrop, (yDrop + 100) - ((t/((velocity2[i])*400))%120), 20));
-            if((150 - ((t/((velocity2[i])*400))%120)) > 90){
+            if((150 - ((t/((velocity2[i])*400))%120)) > 5)
+            {
                 if(rainOn === 1){
                     this.shapes.drop.draw(context, program_state, model_transform10, particles2[i]);
                 }
@@ -509,11 +510,17 @@ export class Volcano extends Volcano_Base {
         }
 
         // Draw buildings
-        const medieval_house_transform = Mat4.identity()
+        const shack_transform2 = Mat4.identity()
             .times(Mat4.scale(.05, .05, .05))
-            .times(Mat4.translation(-7, -10, -16.5))
-            .times(Mat4.rotation(-0.25, 0, 0, 1));
-        this.shapes.medieval_house.draw(context, program_state, medieval_house_transform, this.medieval_house);
+            .times(Mat4.translation(-7, -10, -17))
+            .times(Mat4.rotation(0.2, 0, 0, 1));
+        this.shapes.shack.draw(context, program_state, shack_transform2, this.shack);
+
+        const medieval_house_transform2 = Mat4.identity()
+            .times(Mat4.scale(.05, .05, .05))
+            .times(Mat4.translation(12, -11, -16))
+            .times(Mat4.rotation(0, -0.5, 0.5, 1));
+        this.shapes.medieval_house.draw(context, program_state, medieval_house_transform2, this.medieval_house);
 
         const shack_transform = Mat4.identity()
             .times(Mat4.scale(0.05, 0.05, 0.05))
