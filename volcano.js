@@ -257,6 +257,12 @@ export class Volcano extends Volcano_Base {
             diffusivity: 1,
             specularity: 0.1
         });
+        this.smoke = new Material(new defs.Phong_Shader(1), {
+            color: color(0.5, 0.5, 0.5, 1),
+            ambient: .3,
+            diffusivity: 1,
+            specularity: .5
+        });
         this.medieval_house = new Material(new defs.Phong_Shader(1), {
             color: color(101 / 255, 69 / 255, 52 / 255, 1),
             ambient: 0.3,
@@ -408,8 +414,8 @@ export class Volcano extends Volcano_Base {
 
 
         //Draw Smoke
-        this.smoke = new Material(new defs.Phong_Shader(1), {color: color(0.5, 0.5, 0.5, 1), ambient: .3, diffusivity: 1, specularity: .5});
-        particles.push(this.smoke);
+        this.particles.push(this.smoke);
+
 
 
         //Particles Movement
