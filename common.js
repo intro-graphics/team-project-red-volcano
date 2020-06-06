@@ -782,6 +782,7 @@ class Movement_Controls extends Scene
       this.key_triggered_button( "Right",  [ "d" ], () => this.thrust[0] = -1, undefined, () => this.thrust[0] = 0 );
       this.new_line();
       this.key_triggered_button( "Down",   [ "z" ], () => this.thrust[1] =  1, undefined, () => this.thrust[1] = 0 ); 
+      //this.key_triggered_button("Graduation Background on/off", ["b"], this.Banner);
 
       const speed_controls = this.control_panel.appendChild( document.createElement( "span" ) );
       speed_controls.style.margin = "30px";
@@ -829,6 +830,9 @@ class Movement_Controls extends Scene
                                                  () => { this.will_take_over_graphics_state = true }, "blue" );
       this.new_line();
     }
+
+
+
   first_person_flyaround( radians_per_frame, meters_per_frame, leeway = 70 )
     {                                                     // (Internal helper function)
                                                           // Compare mouse's location to all four corners of a dead box:
@@ -892,6 +896,18 @@ class Movement_Controls extends Scene
                                      // Log some values:
       this.pos    = this.inverse().times( vec4( 0,0,0,1 ) );
       this.z_axis = this.inverse().times( vec4( 0,0,1,0 ) );
+
+      if (attached)
+        {
+          this.inverse().set( Mat4.look_at( vec3( -7,5,-50 ), vec3( 10,-5,10 ), vec3( 0,1,0 ) ) );
+          this. matrix().set( Mat4.inverse( this.inverse() ) );
+        }
+       else
+       {
+          this.inverse().set( Mat4.translation(0, -0.2, -6).times(Mat4.rotation(20*(Math.PI/180), 1, 0, 0,).times(Mat4.rotation((160*(Math.PI/180)), 0, 1, 0))));
+          this. matrix().set( Mat4.inverse( this.inverse() ) );
+       }
+        
     }
 }
 
