@@ -193,6 +193,12 @@ export class Volcano extends Volcano_Base {
             diffusivity: 1,
             specularity: .5
         });
+        this.drop = new Material(new defs.Phong_Shader(1), {
+            color: color(0, 0, 1, 1),
+            ambient: .3,
+            diffusivity: 1,
+            specularity: .5
+        });
         this.medieval_house = new Material(new defs.Phong_Shader(1), {
             color: color(101 / 255, 69 / 255, 52 / 255, 1),
             ambient: 0.3,
@@ -264,7 +270,7 @@ export class Volcano extends Volcano_Base {
     make_control_panel() {
         this.key_triggered_button("Graduation Background on/off", ["b"], () => this.background_toggle = this.background_toggle === this.background ? this.video_background : this.background);
         this.new_line();
-        this.key_triggered_button("Rain on/off", ["t"], this.Rain);
+        this.key_triggered_button("Rain on/off", ["n"], this.Rain);
         this.key_triggered_button("Smoke on/off", ["m"], this.Smoke);
         this.new_line();
         this.key_triggered_button("Move Left", ["j"], this.move_left);
@@ -349,7 +355,17 @@ export class Volcano extends Volcano_Base {
         this.shapes.volcano.draw(context, program_state, volcano_transform, this.volcano);
 
         // Draw Smoke
-        this.particles.push(this.smoke);
+        if (!this.smokeOn)
+        {
+            this.particles.push(this.smoke);
+        }
+        else // Clear particles array when effect hidden
+        {
+            if (this.particles.length > 0)
+            {
+                this.particles.length = 0;
+            }
+        }
         // Smoke particles movement component
         for (let i = 0; i < this.particles.length; i++) {
             let smoke_transform = Mat4.scale(
@@ -372,13 +388,17 @@ export class Volcano extends Volcano_Base {
         this.shapes.cloud.draw(context, program_state, this.crosshair_Matrix, this.cloud);
 
         // Draw rain drop
-        this.drop = new Material(new defs.Phong_Shader(1), {
-            color: color(0, 0, 1, 1),
-            ambient: .3,
-            diffusivity: 1,
-            specularity: .5
-        });
-        this.particles2.push(this.drop);
+        if (this.rainOn)
+        {
+            this.particles2.push(this.drop);
+        }
+        else // Clear particles array when effect hidden
+        {
+            if (this.particles2.length > 0)
+            {
+                this.particles2.length = 0;
+            }
+        }
         //Drop particles
         for (let i = 0; i < this.particles2.length; i++) {
             let model_transform10 = Mat4.scale(0.02, 0.02, 0.02)
