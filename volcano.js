@@ -332,11 +332,6 @@ export class Volcano extends Volcano_Base {
         {
             this.background_toggle = this.background;
         }
-
-        if (!attached)
-        {
-            program_state.set_camera(Mat4.translation(0, -0.2, -6).times(Mat4.rotation(this.deg_to_rads(20), 1, 0, 0,).times(Mat4.rotation(this.deg_to_rads(160), 0, 1, 0))));
-        }
     }
 
 
