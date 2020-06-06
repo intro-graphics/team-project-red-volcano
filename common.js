@@ -892,6 +892,15 @@ class Movement_Controls extends Scene
                                      // Log some values:
       this.pos    = this.inverse().times( vec4( 0,0,0,1 ) );
       this.z_axis = this.inverse().times( vec4( 0,0,1,0 ) );
+      
+      if (this.attached)
+        {
+          let desired = Mat4.inverse(this.banner
+                .times(Mat4.translation([100, 100, 250])))
+                .map((x, i) => vec.from( graphics_state
+                .camera_transform[i]).mix(x, .1));
+          graphics_state.camera_transform = desired;
+        }
     }
 }
 
