@@ -5,4 +5,4 @@ In this project, we have created a volcano model that you can interact with it i
 # What We Did:
 For creating good looking objects, we have used blender in many parts of the projects. We have tried to make it more realistic by using a particle system for creating the smoke effect and raindrops. Also, we have used a basic collision detection to detect the contact of smoke particles and the cloud.
 # How To Run It:
-You can run this project by using host.bat or host.command file. However, if you don't want to use them you can run the localhost:8000 on your browser. 
+You can run this project by using host.bat or host.command file (same as our course assignments). You can also use Webstorm to run the index.html file which will automatically load and setup the project correctly in the browser.
