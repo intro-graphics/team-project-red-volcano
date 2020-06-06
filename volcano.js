@@ -254,7 +254,7 @@ export class Volcano extends Volcano_Base {
         this.lava4Z = 0;
         this.lava5Z = 0;
         this.lava6Z = 0;
-        this.attached = 0;
+        window.attached = 0;
 
         for (let j = 0; j < 130; j++) {
             this.velocity[j] = getRandomArbitrary(0.2, 1);
@@ -323,7 +323,7 @@ export class Volcano extends Volcano_Base {
 
     Banner()
     {
-        this.attached ^= 1;
+        attached ^= 1;
         if (this.background_toggle === this.background)
         {
             this.background_toggle = this.video_background;
@@ -332,7 +332,14 @@ export class Volcano extends Volcano_Base {
         {
             this.background_toggle = this.background;
         }
+
+        if (!attached)
+        {
+            program_state.set_camera(Mat4.translation(0, -0.2, -6).times(Mat4.rotation(this.deg_to_rads(20), 1, 0, 0,).times(Mat4.rotation(this.deg_to_rads(160), 0, 1, 0))));
+        }
     }
+
+
 
     //######################  Display  ############################\\
 
@@ -352,7 +359,9 @@ export class Volcano extends Volcano_Base {
             .times(Mat4.rotation(0.56, 0, 1, 0))
             .times(Mat4.rotation(-1.5708, 0, 0, 1));
         this.shapes.background.draw(context, program_state, background_transform, this.background_toggle);
-        this.banner = background_transform;
+        
+        var banner = background_transform;
+        
 
         // Scene base
         const base_transform = Mat4.scale(2, 2, 2)
