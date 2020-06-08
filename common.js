@@ -899,6 +899,7 @@ class Movement_Controls extends Scene
 
       if (attached)
         {
+          //this.inverse().set(this.inverse().map( (i) => new Vector( graphics_state.camera_transform[i] ).mix( Mat4.look_at( vec3( 20,50,50 ), vec3( 10,-5,10 ), vec3( 0,1,0 ) )  , dt ) ));
           this.inverse().set( Mat4.look_at( vec3( -7,5,-50 ), vec3( 10,-5,10 ), vec3( 0,1,0 ) ) );
           this. matrix().set( Mat4.inverse( this.inverse() ) );
         }
